@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import json
 import re
 
 # Open the HTML file in read mode
@@ -9,7 +8,8 @@ with open(r'C:\dev\WealthifyMainV2\src\services\CashSavings\templates\statements
 
 # Define a function to escape special characters
 def escape_special_characters(text):
-    escaped_text = re.sub(r'(["\'\\])', r'\\\1', text)
+    # Escape backslashes and double quotes for JavaScript strings
+    escaped_text = text.replace('\\', '\\\\').replace('"', '\\"')
     return escaped_text
 
 # Parse the HTML content using BeautifulSoup
@@ -19,5 +19,9 @@ soup = BeautifulSoup(html_content, 'html.parser')
 for element in soup.find_all(text=True):
     element.replace_with(escape_special_characters(element))
 
-# Print the modified HTML content
-print(soup.prettify())
+# Write the modified HTML content to a new file
+output_file_path = r'C:\dev\WealthifyMainV2\src\services\CashSavings\templates\statements\modified_template.html'
+with open(output_file_path, 'w', encoding='utf-8') as output_file:
+    output_file.write(soup.prettify())
+
+print(f"Modified HTML content has been written to {output_file_path}")
