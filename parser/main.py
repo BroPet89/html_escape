@@ -1,30 +1,23 @@
 from bs4 import BeautifulSoup
 import json
+import re
 
-def escape_html_special_characters(html):
-    # Parse HTML
-    soup = BeautifulSoup(html, 'html.parser')
-    
-    # Get the text content of the HTML
-    text = soup.get_text()
-    
-    # Escape special characters for JSON
-    escaped_text = json.dumps(text)[1:-1]
+# Open the HTML file in read mode
+with open(r'C:\dev\WealthifyMainV2\src\services\CashSavings\templates\statements\template.html', 'r', encoding='utf-8') as file:
+    # Read the contents of the file
+    html_content = file.read()
 
+# Define a function to escape special characters
+def escape_special_characters(text):
+    escaped_text = re.sub(r'(["\'\\])', r'\\\1', text)
     return escaped_text
 
-# Example usage
-html = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Example</title>
-</head>
-<body>
-    <p>This is a paragraph with special characters: &lt; &gt; &amp;</p>
-</body>
-</html>
-"""
+# Parse the HTML content using BeautifulSoup
+soup = BeautifulSoup(html_content, 'html.parser')
 
-escaped_html = escape_html_special_characters(html)
-print(escaped_html)
+# Find all elements with text content and escape special characters
+for element in soup.find_all(text=True):
+    element.replace_with(escape_special_characters(element))
+
+# Print the modified HTML content
+print(soup.prettify())
