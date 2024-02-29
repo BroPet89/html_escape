@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import simplejson as json
 import bs4
 import re
 
@@ -13,6 +14,16 @@ if doctype_tag:
     doctype_string = str(doctype_tag)
     doctype_tag.extract()
     soup.insert(0, doctype_string)
+
+
+def encode_to_json(soup):
+
+    html_string = str(soup)
+
+    # Encode the HTML string to JSON format
+    encoded_json = json.JSONEncoderForHTML().encode(html_string)
+
+    return encoded_json
 
 
 def escape_special_characters_for_json(text):
